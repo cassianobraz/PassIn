@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PassIn.Application.UseCases.Events.GetById;
 using PassIn.Application.UseCases.Events.Register;
+using PassIn.Application.UseCases.Events.RegisterAttendee;
 using PassIn.Communication.Requests;
 using PassIn.Communication.Responses;
 
@@ -11,7 +12,7 @@ namespace PassIn.Api.Controllers;
 public class EventsController : ControllerBase
 {
     [HttpPost]
-    [ProducesResponseType(typeof(RespondeRegisteredEventJson), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ResponseRegisteredJson), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
     public IActionResult Register([FromBody] RequestEventJson request)
     {
@@ -36,9 +37,16 @@ public class EventsController : ControllerBase
     }
 
     [HttpPost]
-    [Route("{id}")]
-    public IActionResult Register([FromRoute] Guid id, [FromBody] RequestRegisterEventJson request)
+    [Route("{eventId}/register")]
+    [ProducesResponseType(typeof(ResponseEventJson), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ResponseErrorJson), StatusCodes.Status404NotFound)]
+    public IActionResult Register([FromRoute] Guid eventId, [FromBody] RequestRegisterEventJson request)
     {
-        return Created();
+        var useCase = new RegisterAttendeeOnEventUseCase();
+
+        var response = useCase.Execute(eventId, request);
+
+        return Created(string.Empty, response);
     }
 }
