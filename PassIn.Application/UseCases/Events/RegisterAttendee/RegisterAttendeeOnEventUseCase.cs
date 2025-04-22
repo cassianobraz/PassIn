@@ -20,7 +20,7 @@ public class RegisterAttendeeOnEventUseCase
         {
             Email = request.Email,
             Name = request.Name,
-            Event_id = eventId,
+            Event_Id = eventId,
             Created_At = DateTime.UtcNow,
         };
 
@@ -49,14 +49,14 @@ public class RegisterAttendeeOnEventUseCase
             throw new ErrorOnValidationException("The e-mail is invalid.");
         }
 
-        var attendeeAlreadyRegistered = _dbContext.Attendees.Any(attendee => attendee.Email.Equals(request.Email) && attendee.Event_id == eventId);
+        var attendeeAlreadyRegistered = _dbContext.Attendees.Any(attendee => attendee.Email.Equals(request.Email) && attendee.Event_Id == eventId);
 
         if (attendeeAlreadyRegistered)
         {
             throw new ConflictException("You can not register twice on the same event.");
         }
 
-        var attendeesForEvent = _dbContext.Attendees.Count(attendee => attendee.Event_id == eventId);
+        var attendeesForEvent = _dbContext.Attendees.Count(attendee => attendee.Event_Id == eventId);
 
         if (attendeesForEvent == eventEntity.Maximum_Attendees)
         {
